@@ -5,11 +5,12 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file contains the routes for your application.
 """
 
-import io
+import cv2
+import numpy as np
+import imutils
 import tensorflow as tf
 from app import app
 from flask import flash, render_template, request
-from PIL import Image
 
 detection_model = tf.keras.models.load_model("app/models/detection_model.h5")
 classification_model = tf.keras.models.load_model("app/models/classification_model.h5")
@@ -43,14 +44,19 @@ def predict():
         return render_template("predict.html", error="No file part")
 
     img_file = request.files["image"].read()
-    img = Image.open(io.BytesIO(img_file))
+    img = cv2.imread(img_file)
 
     img_array = preprocess_image(img)
 
-    # Predict age
-    predicted_age = detection_model.predict(img_array)[0][0]
-    predicted_age = round(predicted_age)
-    return render_template("predict.html", age=predicted_age)
+    # Predict
+    tumor_value = detection_model.predict(img_array)[0][0]
+    has_tumor = round(tumor_value) == 1
+    predicted_tumor = None
+
+    if has_tumor:
+        predicted_tumor = classification_model.predict(img_array)[0][0]
+
+    return render_template("predict.html", prediction=predicted_tumor)
 
 
 ###
@@ -58,11 +64,40 @@ def predict():
 ###
 
 
-def preprocess_image(img: Image):
-    img = img.resize((224, 224))
-    img_array = keras.preprocessing.image.img_to_array(img)
-    img_array = img_array / 255.0
-    img_array = img_array.reshape(1, 224, 224, 3)
+def crop_img(img):
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = cv2.GaussianBlur(gray, (3, 3), 0)
+
+    # threshold the image, then perform a series of erosions +
+    # dilations to remove any small regions of noise
+    thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
+    thresh = cv2.erode(thresh, None, iterations=2)
+    thresh = cv2.dilate(thresh, None, iterations=2)
+
+    # find contours in thresholded image, then grab the largest one
+    cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
+    c = max(cnts, key=cv2.contourArea)
+
+    # find the extreme points
+    extLeft = tuple(c[c[:, :, 0].argmin()][0])
+    extRight = tuple(c[c[:, :, 0].argmax()][0])
+    extTop = tuple(c[c[:, :, 1].argmin()][0])
+    extBot = tuple(c[c[:, :, 1].argmax()][0])
+    ADD_PIXELS = 0
+    new_img = img[
+        extTop[1] - ADD_PIXELS : extBot[1] + ADD_PIXELS,
+        extLeft[0] - ADD_PIXELS : extRight[0] + ADD_PIXELS,
+    ].copy()
+
+    return new_img
+
+
+def preprocess_image(img):
+    new_img = crop_img(img)
+    new_img = cv2.resize(new_img, (224, 224), interpolation=cv2.INTER_CUBIC)
+    new_img = new_img / 255.0
+    img_array = np.expand_dims(new_img, axis=0)
     return img_array
 
 
