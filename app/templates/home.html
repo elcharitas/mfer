@@ -1,14 +1,239 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block css %}{% endblock %} {% block main %}
+        <div
+            :class="{'block': mobileNavOpen, 'hidden': !mobileNavOpen}"
+            class="hidden fixed top-0 left-0 bottom-0 w-4/6 sm:max-w-xs z-50"
+        >
+            <div
+                x-on:click="mobileNavOpen = !mobileNavOpen"
+                class="fixed inset-0 bg-gray-800 opacity-80"
+            ></div>
+            <nav class="relative z-10 px-9 py-8 bg-white h-full">
+                <div class="flex flex-wrap justify-between h-full">
+                    <div class="w-full">
+                        <div class="flex items-center justify-between -m-2">
+                            <div class="w-auto p-2">
+                                <a class="inline-block" href="#"
+                                    ><img
+                                        src="/static/gradia-assets/logos/gradia-name-black.svg"
+                                        alt=""
+                                /></a>
+                            </div>
+                            <div class="w-auto p-2">
+                                <button
+                                    x-on:click="mobileNavOpen = !mobileNavOpen"
+                                >
+                                    <svg
+                                        width="24"
+                                        height="24"
+                                        viewbox="0 0 24 24"
+                                        fill="none"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            d="M6 18L18 6M6 6L18 18"
+                                            stroke="#111827"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        ></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-center py-8 w-full">
+                        <ul>
+                            <li class="mb-12">
+                                <a
+                                    class="font-heading font-medium text-lg text-gray-900 hover:text-gray-700"
+                                    href="#"
+                                    >Features</a
+                                >
+                            </li>
+                            <li class="mb-12">
+                                <a
+                                    class="font-heading font-medium text-lg text-gray-900 hover:text-gray-700"
+                                    href="#"
+                                    >Solutions</a
+                                >
+                            </li>
+                            <li class="mb-12">
+                                <a
+                                    class="font-heading font-medium text-lg text-gray-900 hover:text-gray-700"
+                                    href="#"
+                                    >Resources</a
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="font-heading font-medium text-lg text-gray-900 hover:text-gray-700"
+                                    href="#"
+                                    >Pricing</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex flex-col justify-end w-full">
+                        <div class="flex flex-wrap">
+                            <div class="w-full">
+                                <button
+                                    class="p-0.5 font-heading block w-full text-lg text-gray-900 font-medium rounded-10"
+                                >
+                                    <div class="py-2 px-5 rounded-10">
+                                        <p>Login</p>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="w-full">
+                                <button
+                                    class="group relative p-0.5 font-heading block w-full text-lg text-gray-900 font-medium bg-gradient-cyan overflow-hidden rounded-10"
+                                >
+                                    <div
+                                        class="absolute top-0 left-0 transform -translate-y-full group-hover:-translate-y-0 h-full w-full bg-gradient-cyan transition ease-in-out duration-500"
+                                    ></div>
+                                    <div class="py-2 px-5 bg-white rounded-lg">
+                                        <p class="relative z-10">
+                                            Try for free
+                                        </p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
 
-{% block css %}{% endblock %}
+    <div class="relative z-10 container mx-auto px-4">
+        <div class="flex flex-wrap items-center -m-6 pt-32 pb-24">
+            <div class="w-full lg:w-1/2 p-6">
+                <div class="lg:max-w-xl">
+                    <h1
+                        class="mb-8 font-heading text-8xl md:text-10xl text-gray-900 font-bold"
+                    >
+                        Detect and Classify Brain-Tumor
+                    </h1>
+                    <p class="mb-10 text-gray-600 text-xl">
+                        This solution makes use of an advanced customized deep
+                        learning model, that allows the prediction of glioma,
+                        meningioma, and pituitary tumors.
+                    </p>
+                    <div class="flex flex-wrap -m-2.5 mb-20">
+                        <div class="w-auto p-2.5">
+                            <a href="#"></a>
+                        </div>
+                    </div>
+                    <p
+                        class="mb-2.5 font-heading font-semibold text-gray-900 text-lg"
+                    >
+                        Ratings by 100 Users
+                    </p>
+                    <div class="flex items-center">
+                        <div class="flex items-center mr-2">
+                            <img
+                                class="mr-1"
+                                src="/static/gradia-assets/elements/hero/star.svg"
+                                alt=""
+                            /><img
+                                class="mr-1"
+                                src="/static/gradia-assets/elements/hero/star.svg"
+                                alt=""
+                            /><img
+                                class="mr-1"
+                                src="/static/gradia-assets/elements/hero/star.svg"
+                                alt=""
+                            /><img
+                                class="mr-1"
+                                src="/static/gradia-assets/elements/hero/star.svg"
+                                alt=""
+                            /><img
+                                src="/static/gradia-assets/elements/hero/star.svg"
+                                alt=""
+                            />
+                        </div>
+                        <div class="flex items-center">
+                            <p
+                                class="mr-1.5 font-heading font-medium text-base text-gray-900"
+                            >
+                                4.2/5
+                            </p>
+                            <p class="font-heading text-gray-500 text-base">
+                                (100 Reviews)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-full lg:w-1/2 p-6">
+                <img
+                    class="block mx-auto rounded"
+                    src="https://images.unsplash.com/photo-1453847668862-487637052f8a?crop=entropy&amp;cs=srgb&amp;fm=jpg&amp;ixid=M3wzMzIzMzB8MHwxfHNlYXJjaHwzfHxicmFpbiUyN3xlbnwwfHx8fDE3Mjc2MjQ1NTN8MA&amp;ixlib=rb-4.0.3&amp;q=85&amp;w=1920"
+                    alt=""
+                />
+            </div>
+        </div>
+    </div>
+    <img
+        class="absolute bottom-0 left-0"
+        src="/static/gradia-assets/elements/hero/gradient.png"
+    />
 
-{% block main %}
-<div class="p-5 mb-4 bg-light rounded-3 border">
-  <div class="container-fluid py-5">
-    <h1 class="display-5 fw-bold">Hello, world!</h1>
-    <p>This is a simple starter template for a Flask Application</p>
-  </div>
+<div class="container mx-auto">
+    <div class="mb-6">
+        <label class="block text-sm text-gray-900 mb-3"
+            >Your Name
+        </label>
+        <div
+            class="p-px bg-gradient-cyan focus-within:ring-4 focus-within:ring-indigo-500 rounded-lg"
+        >
+            <input
+                class="w-full px-6 py-4 placeholder-gray-500 text-base text-gray-500 bg-white outline-none rounded-lg"
+                type="text"
+                placeholder="Write a text"
+            />
+        </div>
+    </div>
+    <div class="mb-6">
+        <label class="block text-sm text-gray-900 mb-3"
+            >Images to Check</label
+        >
+        <div
+            class="p-px bg-gradient-cyan focus-within:ring-4 focus-within:ring-indigo-500 rounded-lg"
+        >
+            <input
+                class="w-full px-6 py-4 placeholder-gray-500 text-base text-gray-500 bg-white outline-none rounded-lg"
+                type="file"
+            />
+        </div>
+    </div>
+    <div class="mb-6">
+        <label class="block text-sm text-gray-900 mb-3"
+            >Label for select</label
+        >
+        <div
+            class="p-px bg-gradient-cyan focus-within:ring-4 focus-within:ring-indigo-500 rounded-lg"
+        >
+            <select
+                class="w-full px-6 py-4 placeholder-gray-500 text-base text-gray-500 bg-white outline-none rounded-lg"
+                name="field-name"
+            >
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+                <option>Option 4</option>
+            </select>
+        </div>
+    </div>
+    <button
+        class="inline-block group p-0.5 font-heading text-base text-gray-900 font-bold bg-white hover:bg-gray-50 bg-gradient-cyan overflow-hidden rounded-md"
+        type="submit"
+    >
+        <div class="relative py-4 px-9 bg-white rounded">
+            <div
+                class="absolute top-0 left-0 transform -translate-y-full group-hover:-translate-y-0 h-full w-full bg-gradient-cyan transition ease-in-out duration-500"
+            ></div>
+            <span class="relative z-10">Submit</span>
+        </div>
+    </button>
 </div>
-{% endblock %}
-
-{% block js %}{% endblock %}
+{% endblock %} {% block js %}{% endblock %}
