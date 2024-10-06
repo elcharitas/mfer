@@ -37,26 +37,34 @@ def about():
 # API routes, should return html
 ###
 
+LABELS = ["No Tumor", "Glioma Tumor", "Pituitary Tumor", "Meningioma Tumor"]
+
 
 @app.route("/predict", methods=["POST"])
 def predict():
+    print("starting prediction")
     if "image" not in request.files:
+        print(f"No file part: {request.files}")
         return render_template("predict.html", error="No file part")
 
-    img_file = request.files["image"].read()
-    img = cv2.imread(img_file)
+    img_file = request.files["image"]
+    img_array = np.frombuffer(img_file.read(), np.uint8)  # Read image data
+    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-    img_array = preprocess_image(img)
+    prediction_img_array = preprocess_image(img)
+    classification_img_array = preprocess_image(img, target_size=(224, 224))
 
     # Predict
-    tumor_value = detection_model.predict(img_array)[0][0]
+    tumor_value = detection_model.predict(prediction_img_array)[0][0]
     has_tumor = round(tumor_value) == 1
     predicted_tumor = None
 
     if has_tumor:
-        predicted_tumor = classification_model.predict(img_array)[0][0]
+        predicted_tumor = classification_model.predict(classification_img_array)
+        predicted_class = np.argmax(predicted_tumor, axis=1)[0]
+        predicted_probabilities = predicted_tumor[0]
 
-    return render_template("predict.html", prediction=predicted_tumor)
+    return render_template("predict.html", prediction=LABELS[predicted_class])
 
 
 ###
@@ -93,9 +101,9 @@ def crop_img(img):
     return new_img
 
 
-def preprocess_image(img):
+def preprocess_image(img, target_size=(256, 256)):
     new_img = crop_img(img)
-    new_img = cv2.resize(new_img, (224, 224), interpolation=cv2.INTER_CUBIC)
+    new_img = cv2.resize(new_img, target_size, interpolation=cv2.INTER_CUBIC)
     new_img = new_img / 255.0
     img_array = np.expand_dims(new_img, axis=0)
     return img_array
