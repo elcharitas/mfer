@@ -757,3 +757,10 @@ video {
     padding-top: 0px;
   }
 }
+
+/** style for sm:flex-row */
+@media (min-width: 640px) {
+  .sm\:flex-row {
+    flex-direction: row;
+  }
+}
