@@ -1,2 +1,15 @@
-{% if prediction %} Hey {{ patient_name }}, Our model has diagnosed you to have
-<b>{{ prediction }}</b>. {% else %} No Tumor Detected {% endif %}
+<div class="mb-10">
+    {% if prediction %} Hey {{ patient_name }}, Based on the MRI image you
+    submitted, our model has diagnosed it to be <b>{{ prediction }}</b>. {% else
+    %} The MRI image submitted shows no signs of any abnormalities or brain
+    tumor. {% endif %}
+</div>
+
+<a
+    href="/"
+    class="inline-block group p-0.5 font-heading text-base text-gray-900 font-bold bg-white hover:bg-gray-50 bg-gradient-cyan overflow-hidden rounded-md"
+>
+    <div class="relative py-4 px-9 bg-white rounded">
+        <span class="relative z-10">Test new Images</span>
+    </div>
+</a>

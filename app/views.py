@@ -69,7 +69,7 @@ def predict():
     return render_template(
         "predict.html",
         prediction=LABELS[predicted_class] if has_tumor else None,
-        patient_name=patient_name,
+        patient_name=patient_name or "there",
     )
 
 
