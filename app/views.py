@@ -37,7 +37,7 @@ def about():
 # API routes, should return html
 ###
 
-LABELS = ["No Tumor", "Glioma Tumor", "Pituitary Tumor", "Meningioma Tumor"]
+LABELS = ["Pituitary Tumor", "Glioma Tumor", "Meningioma Tumor", "No Tumor"]
 
 
 @app.route("/predict", methods=["POST"])
@@ -47,24 +47,30 @@ def predict():
         print(f"No file part: {request.files}")
         return render_template("predict.html", error="No file part")
 
+    patient_name = request.form["patient_name"]
+
     img_file = request.files["image"]
     img_array = np.frombuffer(img_file.read(), np.uint8)  # Read image data
     img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-    prediction_img_array = preprocess_image(img)
-    classification_img_array = preprocess_image(img, target_size=(224, 224))
+    detection_img_array = preprocess_image(img)
 
-    # Predict
-    tumor_value = detection_model.predict(prediction_img_array)[0][0]
+    # Detect if has tumor
+    tumor_value = detection_model.predict(detection_img_array)[0][0]
     has_tumor = round(tumor_value) == 1
+
     predicted_tumor = None
 
     if has_tumor:
+        classification_img_array = preprocess_image(img, target_size=(224, 224))
         predicted_tumor = classification_model.predict(classification_img_array)
         predicted_class = np.argmax(predicted_tumor, axis=1)[0]
-        predicted_probabilities = predicted_tumor[0]
 
-    return render_template("predict.html", prediction=LABELS[predicted_class])
+    return render_template(
+        "predict.html",
+        prediction=LABELS[predicted_class] if has_tumor else None,
+        patient_name=patient_name,
+    )
 
 
 ###

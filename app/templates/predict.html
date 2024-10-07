@@ -1,1 +1,2 @@
-{% if prediction %} {{ prediction }} {% else %} No Tumor Detected {% endif %}
+{% if prediction %} Hey {{ patient_name }}, Our model has diagnosed you to have
+<b>{{ prediction }}</b>. {% else %} No Tumor Detected {% endif %}
