@@ -13,4 +13,4 @@ COPY . .
 EXPOSE ${PORT}
 
 # Run the application using Gunicorn, reading the port from environment variable
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "app:app"]
+CMD ["gunicorn", "app:app"]
