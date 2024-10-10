@@ -1,0 +1,3 @@
+[build]
+builder = "nixpacks"
+buildCommand = "sudo apt-get install libglu1 && sudo apt-get update && apt-get install ffmpeg libsm6 libxext6  -y"
