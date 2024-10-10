@@ -1,8 +1,35 @@
 <div class="mb-10">
-    {% if prediction %} Hey {{ patient_name }}, Based on the MRI image you
-    submitted, our model has diagnosed it to be <b>{{ prediction }}</b>. {% else
-    %} The MRI image submitted shows no signs of any abnormalities or brain
-    tumor. {% endif %}
+    {% if result|length > 0 %} {% for data in result %}
+    <br />{% if data['has_tumor'] %}
+    <div class="mb-2 text-gray-600">
+        <img
+            src="{{ data['b64_image'] }}"
+            alt="MRI Image"
+            class="w-full h-auto"
+            style="width: 200px; height: 150px"
+        />
+        <br />
+        <strong>Image {{ data['id'] }}:</strong> The MRI image submitted shows
+        signs of a <strong>{{ data['predicted_tumor']['label'] }}</strong> brain
+        tumor.
+        <br />
+        <strong>Confidence Score:</strong> {{ data['predicted_tumor']['score']
+        }}%
+    </div>
+    {% else %}
+    <div class="mb-2 text-gray-600">
+        <img
+            src="{{ data['b64_image'] }}"
+            alt="MRI Image"
+            class="w-full h-auto"
+            style="width: 200px; height: 150px"
+        />
+        <br />
+        <strong>Image {{ data['id'] }}:</strong> The MRI image submitted shows
+        no signs of any abnormalities or brain tumor.
+    </div>
+    {% endif %} {% endfor %} {% else %} The MRI images submitted shows no signs
+    of any abnormalities or brain tumor. {% endif %}
 </div>
 
 <a

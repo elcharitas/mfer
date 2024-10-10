@@ -11,6 +11,7 @@ import imutils
 import tensorflow as tf
 from app import app
 from flask import flash, render_template, request
+import base64
 
 detection_model = tf.keras.models.load_model("app/models/detection_model.h5")
 classification_model = tf.keras.models.load_model("app/models/classification_model.h5")
@@ -47,29 +48,56 @@ def predict():
         print(f"No file part: {request.files}")
         return render_template("predict.html", error="No file part")
 
-    patient_name = request.form["patient_name"]
+    img_files = request.files.getlist("image")
+    result = []
 
-    img_file = request.files["image"]
-    img_array = np.frombuffer(img_file.read(), np.uint8)  # Read image data
-    img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
+    for img_file in img_files:
+        img_buffer = img_file.read()
+        img_array = np.frombuffer(img_buffer, np.uint8)  # Read image data
+        img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
 
-    detection_img_array = preprocess_image(img)
+        detection_img_array = preprocess_image(img)
 
-    # Detect if has tumor
-    tumor_value = detection_model.predict(detection_img_array)[0][0]
-    has_tumor = round(tumor_value) == 1
+        # Detect if has tumor
+        tumor_value = detection_model.predict(detection_img_array)[0][0]
+        has_tumor = round(tumor_value) == 1
 
-    predicted_tumor = None
+        predicted_tumor = None
 
-    if has_tumor:
-        classification_img_array = preprocess_image(img, target_size=(224, 224))
-        predicted_tumor = classification_model.predict(classification_img_array)
-        predicted_class = np.argmax(predicted_tumor, axis=1)[0]
+        # Encode the image data as base64
+        _, img_encoded = cv2.imencode('.jpg', img)  # Encode image as JPG
+        b64_image = base64.b64encode(img_encoded).decode('utf-8')
+        b64_image = f"data:image/jpeg;base64,{b64_image}"  # Create
+
+        if has_tumor:
+            classification_img_array = preprocess_image(img, target_size=(224, 224))
+            predicted_tumor = classification_model.predict(classification_img_array)
+            predicted_class = np.argmax(predicted_tumor, axis=1)[0]
+            prediction_confidence = predicted_tumor[0][predicted_class]
+
+            result.append(
+                {
+                    "id": len(result) + 1,
+                    "has_tumor": True,
+                    "b64_image": b64_image,
+                    "predicted_tumor": {
+                        "label": LABELS[predicted_class],
+                        "score": round(tumor_value * 100, 1),
+                    }
+                }
+            )
+        else:
+            result.append({
+                "id": len(result) + 1,
+                "b64_image": b64_image,
+                "has_tumor": False,
+                "predicted_tumor": None
+            })
+
 
     return render_template(
         "predict.html",
-        prediction=LABELS[predicted_class] if has_tumor else None,
-        patient_name=patient_name or "there",
+        result=result,
     )
 
 
